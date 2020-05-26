@@ -1,0 +1,48 @@
+""
+This is the step by step instruction to run the file
+""
+
+To run the experiment , type python3 main.py <list of arguments>
+
+The various arguments are categorized as follows:
+(A) PERSON BOUNDING BOXES
+	(1) --choose_detector <0 (YOLOV3) or 1(MOBILE-NET) for detecting the person bounding boxes> (default value is 0)
+	(2) --min_confidence < a value between 0 and 1 such that person bounding boxes below this score will be removed> (default value is provided)
+	(3) --nms_max_overlap <a value between 0 and 1 to perform Non Maximum Suppression on the person bounding boxes> (default value is provided)	
+
+(B) MASK DETECTION:
+	(1) --mask_detector_file <name of the .h5 file containing the weights of RETINA-NET trained to detect faces with/without mask.> (default value is provided)
+	(2) --mask_backbone <backbone of the mask detector> (default value is set "resnet50")
+
+(C) FACE RECOGNITION:
+	(1) --face_net_file <name of the .h5 file containing the weights of FACENET> (default value is provided)
+	(2) --stored_facial_embeddings <name of .npy file containing the embeddings of the training images for FACENET> (default value is provided)
+
+(D) INPUT and OUTPUT MODALITIES:
+	(1) --use_video_flag (if True, the input is video else the input are the frames of video.)  # Argument
+	(2) --writeVideo_flag (if you want to write the output to video file) (default value is True)
+	(3) --input_file_path <filename of the input video or the folder where the frames of the video is present>
+	(4) --video_output_file <output file name> THIS MUST BE PROVIDED.
+
+(D) For interaction in the first frame: This is needed to select the reference width for calculating the social distances and the pixel position in the image having a reference tempearture of Tref.
+	(1) --click (To enable the click and select option as mentioned in (D) )
+	(2) --ref_width <The real world distance which corresponds to the distance between two clicks.> (default value is set to 1 FEET)
+	(3) --social_distance_in_feet <The value is feet which is need to maintain social-distancing> (default value is set to 4 FEET)
+	(4) --crowd_max <value need to designate a crowd> (default value is 10)
+  
+ (E) Additional arguments.
+
+    (1) --frames_skip <Process the frames_skip'th frame or image>  (default value is 5. The first frame will always be processed.)
+    (2) --selected_reference_temperature <Reference temperature in str format>   (default is set to "25.5")
+    (3) --limit_temperature <Temperature limit of the face.>  (default is set to "37.5") 
+    In our code, we have not used any FLIR images and it calculates the Facial temperature on the RGB image directly. A FLIR camera can be integrated with the normal video stream for more precise calculation of the facial temperature.
+
+  Output: (a) A text file containing the name of the defaulters for every frame. The name of the file will be same as the name of the output video file.
+  		(b) The output video.
+
+  	In every frame of the output video file, the detected facial bounding boxes are shown in WHITE color. The non-defaulter person bounding boxes are shown in GREEN color. The defaulters violating all the three norms (ie Social distancing, Mask and Temperature) is shown in RED color, while the defaulter violating either one or two norms are shown in DARK-BLUE color.
+
+
+ Have a look at https://github.com/fizyr/keras-retinanet/issues/554 if there is an error with retinanet.keras_retinanet.utils.compute_overlap
+
+Sample run: python3 main.py --use_video_flag --choose_detector 0 --video_output_file trial_final.mp4 --frames_skip 5
